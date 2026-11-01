@@ -1,0 +1,26 @@
+{
+  "name": "taskline",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,magenta \"bun run dev:api\" \"bun run dev:web\"",
+    "dev:api": "bun run --filter @taskline/api dev",
+    "dev:web": "bun run --filter @taskline/web dev",
+    "build": "bun run --filter @taskline/web build",
+    "test": "bun run --filter @taskline/api test",
+    "typecheck": "bun run --filter '*' typecheck",
+    "db:reset": "bun run --filter @taskline/api db:reset",
+    "db:seed": "bun run --filter @taskline/api db:seed",
+    "validate:schema": "bun run scripts/validate-schema.ts",
+    "smoke": "bun run scripts/smoke.ts",
+    "check": "bun run validate:schema && bun run test && bun run typecheck"
+  },
+  "devDependencies": {
+    "@dbml/core": "^8.2.5",
+    "@types/bun": "latest",
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.2"
+  }
+}

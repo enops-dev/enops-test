@@ -1,0 +1,27 @@
+{
+  "name": "@taskline/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "test": "bun test tests",
+    "typecheck": "tsc --noEmit",
+    "db:reset": "bun src/reset.ts",
+    "db:seed": "bun src/seed-runner.ts"
+  },
+  "dependencies": {
+    "hono": "^4.9.0",
+    "jsonwebtoken": "8.5.1",
+    "openai": "4.52.7",
+    "resend": "3.5.0",
+    "stripe": "14.25.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/jsonwebtoken": "8.5.9",
+    "typescript": "^5.9.2"
+  }
+}
