@@ -186,6 +186,20 @@ describe("email and invites", () => {
     expect(forged.status).toBe(410);
   });
 
+  test("rejects an invite token forged with alg none", async () => {
+    spyOn(resend.emails, "send").mockResolvedValue({ data: { id: "em_3" }, error: null } as never);
+    const created = await post(`/api/v1/projects/${WEBSITE_PROJECT}/invites`, { email: "alg@example.com" });
+    const { link } = await json(created);
+    const token = new URL(link).searchParams.get("token") ?? "";
+    const [, payload] = token.split(".");
+    const base64url = (value: string) => Buffer.from(value).toString("base64url");
+    const forged = `${base64url(JSON.stringify({ alg: "none", typ: "JWT" }))}.${payload}.`;
+
+    const response = await post("/api/v1/invites/accept", { token: forged, name: "Mallory" });
+    expect(response.status).toBe(410);
+    expect(db.query("SELECT id FROM members WHERE email = 'alg@example.com'").get()).toBeNull();
+  });
+
   test("sends one weekly digest per member with open work", async () => {
     const batch = spyOn(resend.batch, "send").mockImplementation(
       async (emails) => ({ data: { data: emails.map((_, i) => ({ id: `em_${i}` })) }, error: null }) as never,
