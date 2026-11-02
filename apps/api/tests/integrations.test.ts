@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
+import jwt from "jsonwebtoken";
 import { createApp } from "../src/app";
 import { openDatabase, type Db } from "../src/db";
 import { env } from "../src/env";
@@ -184,6 +185,21 @@ describe("email and invites", () => {
     expect(again.status).toBe(410);
     const forged = await post("/api/v1/invites/accept", { token: `${token}x`, name: "Sam" });
     expect(forged.status).toBe(410);
+  });
+
+  test("rejects an unsigned (alg none) invite token", async () => {
+    spyOn(resend.emails, "send").mockResolvedValue({ data: { id: "em_3" }, error: null } as never);
+    const created = await post(`/api/v1/projects/${WEBSITE_PROJECT}/invites`, { email: "alex@example.com" });
+    const { link } = await json(created);
+    const token = new URL(link).searchParams.get("token") ?? "";
+    const claims = jwt.decode(token) as Record<string, unknown>;
+
+    const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    const unsigned = `${encode({ alg: "none", typ: "JWT" })}.${encode(claims)}.`;
+
+    const response = await post("/api/v1/invites/accept", { token: unsigned, name: "Alex" });
+    expect(response.status).toBe(410);
+    expect(db.query("SELECT id FROM members WHERE email = 'alex@example.com'").get()).toBeNull();
   });
 
   test("sends one weekly digest per member with open work", async () => {
