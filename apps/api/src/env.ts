@@ -38,6 +38,7 @@ export const env = {
   openaiModel: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
   resendApiKey: process.env.RESEND_API_KEY ?? "",
   emailFrom: process.env.EMAIL_FROM ?? "Taskline <hello@taskline.dev>",
+  sentryDsn: process.env.SENTRY_DSN ?? "",
   inviteSecret: process.env.INVITE_SECRET ?? "dev-only-invite-secret",
 };
 

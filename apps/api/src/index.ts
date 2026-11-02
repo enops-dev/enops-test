@@ -1,3 +1,4 @@
+import "./sentry";
 import { createApp } from "./app";
 import { openDatabase } from "./db";
 import { env } from "./env";

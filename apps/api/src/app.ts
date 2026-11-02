@@ -8,6 +8,7 @@ import type { Db } from "./db";
 import { env } from "./env";
 import { registerIntegrationRoutes } from "./integration-routes";
 import { sendAssignmentEmail } from "./mailer";
+import { reportError } from "./sentry";
 import {
   firstMemberId,
   logActivity,
@@ -711,6 +712,7 @@ export function createApp(db: Db) {
   app.onError((error, c) => {
     if (process.env.NODE_ENV !== "test") {
       console.error(`[${c.req.method}] ${c.req.path}`, error);
+      reportError(error, { method: c.req.method, path: c.req.path });
     }
     return c.json(
       {
