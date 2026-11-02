@@ -91,7 +91,7 @@ type ActivityRow = {
   project_name?: string | null;
   actor_name?: string | null;
   actor_color?: string | null;
-  task_title?: string | null;
+  task_title: string;
 };
 
 const TASK_SELECT = `
@@ -137,7 +137,7 @@ function toActivity(row: ActivityRow) {
     projectId: row.project_id,
     projectName: row.project_name ?? null,
     taskId: row.task_id,
-    taskTitle: row.task_title ?? null,
+    taskTitle: row.task_title.trim(),
     actorName: row.actor_name ?? null,
     actorColor: row.actor_color ?? null,
     action: row.action,
