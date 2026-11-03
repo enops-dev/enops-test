@@ -1,7 +1,9 @@
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
+import jwt from "jsonwebtoken";
 import { createApp } from "../src/app";
 import { openDatabase, type Db } from "../src/db";
 import { env } from "../src/env";
+import { createInvite, readInvite } from "../src/invites";
 import { seedDatabase } from "../src/seed";
 import { openai, resend, stripe } from "../src/vendors";
 
@@ -184,6 +186,23 @@ describe("email and invites", () => {
     expect(again.status).toBe(410);
     const forged = await post("/api/v1/invites/accept", { token: `${token}x`, name: "Sam" });
     expect(forged.status).toBe(410);
+  });
+
+  test("readInvite only accepts invite tokens signed with HS256", async () => {
+    const created = createInvite(db, {
+      projectId: WEBSITE_PROJECT,
+      email: "lee@example.com",
+      role: "member",
+      invitedBy: MAYA,
+    });
+    expect(readInvite(db, created.token)?.id).toBe(created.id);
+
+    const claims = jwt.decode(created.token) as Record<string, unknown>;
+    const hs512 = jwt.sign(claims, env.inviteSecret, { algorithm: "HS512" });
+    expect(readInvite(db, hs512)).toBeNull();
+
+    const unsigned = jwt.sign(claims, "", { algorithm: "none" });
+    expect(readInvite(db, unsigned)).toBeNull();
   });
 
   test("sends one weekly digest per member with open work", async () => {

@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@sentry/bun": "^11.10.0",
-    "hono": "^4.9.0",
-    "jsonwebtoken": "8.5.1",
+    "hono": "^4.13.14",
+    "jsonwebtoken": "9.0.0",
     "openai": "4.52.7",
     "resend": "3.5.0",
     "stripe": "14.25.0",
