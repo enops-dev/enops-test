@@ -73,7 +73,7 @@ export function registerIntegrationRoutes(app: Hono, db: Db) {
 
     let event;
     try {
-      event = verifyStripeEvent(await c.req.text(), signature);
+      event = await verifyStripeEvent(await c.req.text(), signature);
     } catch {
       return c.json({ error: "Invalid signature" }, 400);
     }

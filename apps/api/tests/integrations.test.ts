@@ -97,7 +97,7 @@ describe("billing", () => {
       id: "sub_1",
       status: "active",
       customer: "cus_1",
-      current_period_end: 1_798_761_600,
+      items: { data: [{ current_period_end: 1_798_761_600 }] },
       metadata: { projectId: WEBSITE_PROJECT },
     } as never);
 
@@ -107,7 +107,7 @@ describe("billing", () => {
       type: "checkout.session.completed",
       data: { object: { id: "cs_1", object: "checkout.session", subscription: "sub_1" } },
     });
-    const signature = stripe.webhooks.generateTestHeaderString({
+    const signature = await stripe.webhooks.generateTestHeaderStringAsync({
       payload,
       secret: "whsec_test_secret",
     });
