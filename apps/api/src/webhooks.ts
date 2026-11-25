@@ -7,8 +7,8 @@ import { stripe } from "./vendors";
 const STATUSES = new Set(["incomplete", "trialing", "active", "past_due", "canceled"]);
 
 /** Throws when the signature does not match the raw body. */
-export function verifyStripeEvent(payload: string, signature: string): Stripe.Event {
-  return stripe.webhooks.constructEvent(payload, signature, env.stripeWebhookSecret);
+export async function verifyStripeEvent(payload: string, signature: string): Promise<Stripe.Event> {
+  return stripe.webhooks.constructEventAsync(payload, signature, env.stripeWebhookSecret);
 }
 
 function syncSubscription(db: Db, subscription: Stripe.Subscription) {
@@ -17,7 +17,7 @@ function syncSubscription(db: Db, subscription: Stripe.Subscription) {
 
   const status = STATUSES.has(subscription.status) ? subscription.status : "past_due";
   const plan = status === "active" || status === "trialing" ? "pro" : "free";
-  const periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+  const periodEnd = new Date(subscription.items.data[0]!.current_period_end * 1000).toISOString();
   const customer =
     typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id;
 

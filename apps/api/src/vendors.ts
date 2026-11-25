@@ -7,7 +7,7 @@ import { env } from "./env";
 // runs locally (and in tests) with no keys at all.
 
 export const stripe = new Stripe(env.stripeSecretKey || "sk_test_not_configured", {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-03-31.basil",
   appInfo: { name: "Taskline", version: "0.1.0" },
 });
 

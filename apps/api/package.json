@@ -17,7 +17,7 @@
     "jsonwebtoken": "8.5.1",
     "openai": "4.52.7",
     "resend": "3.5.0",
-    "stripe": "14.25.0",
+    "stripe": "18.0.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {
