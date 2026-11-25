@@ -166,3 +166,13 @@ describe("docs and 404s", () => {
     expect(body.error).toBe("Not Found");
   });
 });
+
+describe("hono security upgrade", () => {
+  test("serves a wildcard-scoped route with the patched hono", async () => {
+    const response = await app.request("/api/v1/projects", {
+      headers: { origin: "http://127.0.0.1:4100" },
+    });
+    expect(response.status).toBe(200);
+    expect(response.headers.get("access-control-allow-origin")).toBe("http://127.0.0.1:4100");
+  });
+});
