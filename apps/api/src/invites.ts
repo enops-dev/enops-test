@@ -39,7 +39,7 @@ export function createInvite(
 export function readInvite(db: Db, token: string): InviteRow | null {
   let claims: InviteClaims;
   try {
-    claims = jwt.verify(token, env.inviteSecret) as InviteClaims;
+    claims = jwt.verify(token, env.inviteSecret, { algorithms: ["HS256"] }) as InviteClaims;
   } catch {
     return null;
   }
